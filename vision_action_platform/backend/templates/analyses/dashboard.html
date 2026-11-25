@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}관리자 대시보드{% endblock %}
+{% block content %}
+<h1>관리자 대시보드</h1>
+<p class="muted">모든 숫자는 PostgreSQL에 저장된 실제 기록을 Django ORM으로 집계한 값입니다 (새로고침하면 최신 값).</p>
+
+<div class="stats">
+  <div class="stat"><span class="muted">회원</span><b>{{ stats.users }}</b></div>
+  <div class="stat"><span class="muted">분석 작업</span><b>{{ stats.jobs }}</b></div>
+  <div class="stat"><span class="muted">사람별 예측</span><b>{{ stats.predictions }}</b></div>
+  <div class="stat"><span class="muted">성공률 (완료 기준)</span><b>{% if stats.success_rate is not None %}{{ stats.success_rate }}%{% else %}-{% endif %}</b></div>
+</div>
+
+<section class="card">
+  <h2>① 17개 동작별 예측 건수</h2>
+  <div class="chart-box" style="height:520px"><canvas id="action-chart" aria-label="17개 동작별 예측 건수 가로 막대그래프"></canvas></div>
+</section>
+
+<div class="grid2">
+  <section class="card">
+    <h2>② 작업 상태별 건수</h2>
+    <div class="chart-box"><canvas id="status-chart" aria-label="작업 상태별 건수 원형그래프"></canvas></div>
+  </section>
+
+<section class="card">
+  <h2>입력 방식별</h2>
+  <table>
+    <thead><tr><th>입력 방식</th><th>작업 수</th><th>평균 처리 시간 (성공)</th></tr></thead>
+    <tbody>
+      {% for row in input_rows %}
+      <tr><td>{{ row.label }}</td><td class="num">{{ row.count }}</td><td class="num">{% if row.avg_sec is not None %}{{ row.avg_sec|floatformat:1 }}초{% else %}-{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+</div>
+
+<section class="card">
+  <h2>최근 작업 (전체 사용자)</h2>
+  <table>
+    <thead><tr><th>#</th><th>사용자</th><th>입력</th><th>상태</th><th>사람 수</th><th>요청 시각</th><th></th></tr></thead>
+    <tbody>
+      {% for job in recent_jobs %}
+      <tr>
+        <td>{{ job.id }}</td><td>{{ job.user.username }}</td><td>{{ job.get_input_type_display }}</td>
+        <td><span class="badge s-{{ job.status }}">{{ job.get_status_display }}</span></td>
+        <td class="num">{{ job.people }}</td><td class="muted">{{ job.created_at|date:"m-d H:i" }}</td>
+        <td><a href="/admin/analyses/analysisjob/{{ job.id }}/change/">Admin</a></td>
+      </tr>
+      {% empty %}<tr><td colspan="7" class="muted">아직 작업이 없습니다.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{{ chart_data|json_script:"chart-data" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

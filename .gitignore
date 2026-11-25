@@ -1,0 +1,41 @@
+# ---- 이 저장소에는 vision_action_platform (교과10 최종 프로젝트)만 올림 ----
+# 수업 실습 자료는 로컬에만 보관
+/artifacts/
+/configs/
+/reports/
+/scripts/
+/src/
+/team17/
+/data/
+/README.md
+/pyproject.toml
+/uv.lock
+/yolo11n-pose.pt
+
+# ---- 용량·비밀 제외 ----
+.venv/
+**/.venv/
+**/venv/
+__pycache__/
+backup/
+.env
+!.env.example
+**/media/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.npy
+*.npz
+*.pkl
+*.parquet
+*.zip
+*.log
+db.sqlite3
+
+# 학습된 모델 (서비스에 필요한 것만 git add -f 로 올림)
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.engine

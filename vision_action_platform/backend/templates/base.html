@@ -1,0 +1,31 @@
+{% load static %}<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Vision Action{% endblock %} · Vision Action</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <nav class="top">
+    <strong>🎬 Vision Action</strong>
+    {% if user.is_authenticated %}
+      <a href="{% url 'analyses:index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">분석</a>
+      {% if user.is_staff %}
+        <a href="{% url 'analyses:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">대시보드</a>
+        <a href="/admin/">Admin</a>
+      {% endif %}
+      <span class="spacer"></span>
+      <span class="who">{{ user.username }}{% if user.is_staff %} (관리자){% endif %}</span>
+      <form method="post" action="{% url 'accounts:logout' %}" style="margin:0">{% csrf_token %}<button>로그아웃</button></form>
+    {% else %}
+      <span class="spacer"></span>
+      <a href="{% url 'accounts:login' %}">로그인</a>
+      <a href="{% url 'accounts:signup' %}">회원가입</a>
+    {% endif %}
+  </nav>
+  <main>{% block content %}{% endblock %}</main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

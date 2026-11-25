@@ -1,0 +1,17 @@
+# FastAPI 서버
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+
+# AI 추론 (학습 환경 subject10_pose_action/.venv 와 같은 버전으로 고정)
+# scikit-learn 버전이 다르면 joblib 모델 로드가 실패하거나 경고가 날 수 있음
+scikit-learn==1.9.1
+joblib==1.6.0
+numpy==2.5.4
+pandas==3.1.1
+ultralytics==8.4.203
+opencv-python==5.0.0.93
+torch==2.15.0
+torchvision==0.29.2
+lap  # YOLO 추적(ByteTrack)에 필요

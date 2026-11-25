@@ -1,0 +1,93 @@
+# Vision Action Platform — 5개 서비스
+#
+#   django   : 화면·DRF API·회원·ORM            (backend 이미지)
+#   celery   : 비동기 분석·카메라 수집·결과 저장  (backend 이미지, 실행 명령만 다름)
+#   fastapi  : YOLO Pose + Random Forest 추론     (ai_service 이미지)
+#   redis    : 작업 대기열
+#   postgres : 영구 DB
+#
+# 전체 실행:      docker compose up -d --build        → http://localhost:${WEB_PORT}/
+# DB·큐만 (개발): docker compose up -d postgres redis   (Django·FastAPI·Celery 는 .venv 로)
+#
+# 컨테이너끼리는 localhost 가 아니라 "서비스 이름"으로 접속합니다 (postgres:5432, redis:6379, fastapi:8001).
+
+x-backend-env: &backend-env
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"               # 컨테이너 안 포트 (.env 의 5434 는 내 컴퓨터 쪽 포트)
+  REDIS_URL: redis://redis:6379/0
+  AI_SERVICE_URL: http://fastapi:8001
+  CAMERA_RELAY_BASE: http://django:8000   # celery 가 django 카메라 중계에서 녹화 (미리보기와 공유)
+  DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,django
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      # 개발 중 .venv 의 Django 가 접속하는 포트 (다른 프로젝트가 5432 사용 → .env POSTGRES_PORT=5434)
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # 컨테이너를 지우거나 재시작해도 데이터 유지
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  fastapi:
+    build: ./ai_service
+    env_file: .env
+    ports:
+      # 개발용 Swagger(/docs) 확인 — 브라우저 사용자는 django 만 씀
+      - "127.0.0.1:${AI_PORT:-8001}:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 10s
+      start_period: 60s
+      retries: 10
+    restart: unless-stopped
+
+  django:
+    build: ./backend
+    env_file: .env
+    environment: *backend-env
+    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "${WEB_PORT:-8080}:8000"
+    volumes:
+      - media:/app/media                       # 업로드·카메라 영상 (celery 와 공유)
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  celery:
+    build: ./backend
+    env_file: .env
+    environment: *backend-env
+    command: celery -A config worker -l info --concurrency 1
+    volumes:
+      - media:/app/media                       # django 가 저장한 업로드 영상을 같은 경로로 읽음
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      fastapi: { condition: service_healthy }
+      django: { condition: service_started }   # migrate 가 먼저 돌도록
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  media:

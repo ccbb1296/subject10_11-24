@@ -1,0 +1,28 @@
+# 비밀 정보
+.env
+
+# 가상환경
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# 업로드·수집 영상, 임시 파일
+uploads/
+captures/
+*.log
+
+# 모델 파일 (용량이 크면 Git 대신 따로 전달)
+# ai_service/models/*.pt
+# ai_service/models/*.joblib
+
+# 에디터
+.vscode/
+.idea/

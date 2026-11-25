@@ -1,0 +1,19 @@
+# Django 웹 서버 · API
+django
+djangorestframework
+python-dotenv
+
+# PostgreSQL 연결
+psycopg[binary]
+
+# 비동기 작업 (Celery + Redis 대기열)
+celery
+redis
+packaging  # kombu 5.7 의 Redis 연결 코드가 필요로 하지만 자동 설치되지 않음
+
+# FastAPI 호출
+requests
+
+# IP Webcam 수집 (Worker가 카메라 프레임을 읽어 MP4로 저장, 화면 없는 서버용 headless)
+opencv-python-headless
+numpy

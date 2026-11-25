@@ -1,0 +1,18 @@
+﻿action_id,action_label,action_name_ko,motion_type,critical_keypoints
+A001,kiosk_tap,키오스크 두드리기,upper_body,left_shoulder|right_shoulder|left_elbow|right_elbow|left_wrist|right_wrist
+A002,throw_one_hand,한손 물건 던지기,upper_body,left_shoulder|right_shoulder|left_elbow|right_elbow|left_wrist|right_wrist
+A003,front_kick,앞차기,lower_body,left_hip|right_hip|left_knee|right_knee|left_ankle|right_ankle
+A004,grab_shake,잡고 흔들기,upper_body,left_shoulder|right_shoulder|left_elbow|right_elbow|left_wrist|right_wrist
+A005,push,밀치기,upper_body,left_shoulder|right_shoulder|left_elbow|right_elbow|left_wrist|right_wrist
+A006,swing,휘두르기,upper_body,left_shoulder|right_shoulder|left_elbow|right_elbow|left_wrist|right_wrist
+A007,sit_floor,바닥에 앉기,sit,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee|left_ankle|right_ankle
+A008,sit_on_object,위에 앉기,sit,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee|left_ankle|right_ankle
+A009,lie_forward,앞으로 눕기,floor,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee
+A010,lie_backward,뒤로 눕기,floor,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee
+A011,body_slam,몸통 박치기,whole_body,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee
+A012,crouch_take_item,쪼그려 물건 빼내기,sit,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee|left_ankle|right_ankle
+A013,shotgun,샷건,upper_body,left_shoulder|right_shoulder|left_elbow|right_elbow|left_wrist|right_wrist
+A014,vomit,구토,whole_body,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee
+A015,fall_sideways,옆으로 쓰러지기,floor,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee
+A016,fall_backward,뒤로 넘어지기,floor,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee
+A017,fall_forward,앞으로 넘어지기,floor,left_shoulder|right_shoulder|left_hip|right_hip|left_knee|right_knee
